@@ -39,6 +39,7 @@ extern int errno;
 #include <zephyr/kernel.h>
 #include <zephyr/kernel/thread_stack.h>
 
+#include <zephyr/drivers/adc.h>
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/drivers/uart.h>
 

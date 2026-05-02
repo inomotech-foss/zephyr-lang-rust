@@ -100,6 +100,10 @@ fn main() -> anyhow::Result<()> {
         .allowlist_function("zr_.*")
         .allowlist_function("device_.*")
         .allowlist_function("SEGGER.*")
+        // ADC
+        .allowlist_item_if("CONFIG_ADC_.*", || options.contains("CONFIG_ADC"))
+        .allowlist_item_if("ADC_.*", || options.contains("CONFIG_ADC"))
+        .allowlist_function_if("adc_.*", || options.contains("CONFIG_ADC"))
         // Bluetooth
         .allowlist_item_if("CONFIG_BT_.*", || options.contains("CONFIG_BT"))
         .allowlist_function_if("bt_.*", || options.contains("CONFIG_BT"))
