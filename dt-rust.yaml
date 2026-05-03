@@ -42,6 +42,16 @@
       raw: !Phandle gpios
       device: crate::device::gpio::GpioPin
 
+# ADC controllers all have a `#io-channel-cells` property, similar to how gpio controllers have
+# `gpio-controller`.
+- name: adc-controller
+  rules:
+    - !HasProp "#io-channel-cells"
+  actions:
+    - !Instance
+      raw: !Myself
+      device: crate::device::adc::Adc
+
 # Flash controllers don't have any particular property to identify them, so we need a list of
 # compatible values that should match.
 - name: flash-controller

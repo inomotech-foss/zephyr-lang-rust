@@ -10,6 +10,8 @@
 
 use crate::sync::atomic::{AtomicBool, Ordering};
 
+#[cfg(CONFIG_ADC)]
+pub mod adc;
 #[cfg(CONFIG_FLASH)]
 pub mod flash;
 #[cfg(CONFIG_GPIO)]
