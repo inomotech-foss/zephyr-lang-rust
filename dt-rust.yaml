@@ -119,3 +119,20 @@
     - !Instance
       raw: !Myself
       device: "crate::device::sensor::Sensor"
+
+# CAN controllers -> aliases::can0::get_instance() -> Can
+- name: can-controller
+  cfg: CONFIG_CAN
+  rules:
+    - !Compatible
+      names:
+        - "zephyr,can-loopback"
+        - "espressif,esp32-twai"
+        - "nxp,flexcan"
+        - "st,stm32-bxcan"
+        - "bosch,m-can-base"
+      level: 0
+  actions:
+    - !Instance
+      raw: !Myself
+      device: "crate::device::can::Can"

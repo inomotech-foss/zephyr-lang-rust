@@ -133,6 +133,10 @@ fn main() -> anyhow::Result<()> {
         .allowlist_item_if("CONFIG_SENSOR_.*", || options.contains("CONFIG_SENSOR"))
         .allowlist_item_if("SENSOR_.*", || options.contains("CONFIG_SENSOR"))
         .allowlist_function_if("sensor_.*", || options.contains("CONFIG_SENSOR"))
+        // CAN
+        .allowlist_item_if("CONFIG_CAN_.*", || options.contains("CONFIG_CAN"))
+        .allowlist_item_if("CAN_.*", || options.contains("CONFIG_CAN"))
+        .allowlist_function_if("can_.*", || options.contains("CONFIG_CAN"))
         // UART
         .allowlist_item_if("CONFIG_UART_.*", || options.contains("CONFIG_SERIAL"))
         .allowlist_function_if("uart_.*", || options.contains("CONFIG_SERIAL"))
