@@ -45,6 +45,10 @@ extern int errno;
 #include <zephyr/drivers/sensor.h>
 #include <zephyr/drivers/can.h>
 #include <zephyr/drivers/spi.h>
+#ifdef CONFIG_FAT_FILESYSTEM_ELM
+#include <zephyr/fs/fs.h>
+#include <zephyr/storage/disk_access.h>
+#endif
 
 #include <zephyr/bluetooth/bluetooth.h>
 #include <zephyr/drivers/flash.h>

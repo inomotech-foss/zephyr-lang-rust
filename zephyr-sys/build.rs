@@ -141,6 +141,10 @@ fn main() -> anyhow::Result<()> {
         .allowlist_item_if("CONFIG_SPI_.*", || options.contains("CONFIG_SPI"))
         .allowlist_item_if("SPI_.*", || options.contains("CONFIG_SPI"))
         .allowlist_function_if("spi_.*", || options.contains("CONFIG_SPI"))
+        // FAT filesystem + disk access
+        .allowlist_item_if("FS_.*", || options.contains("CONFIG_FAT_FILESYSTEM_ELM"))
+        .allowlist_function_if("fs_.*", || options.contains("CONFIG_FAT_FILESYSTEM_ELM"))
+        .allowlist_function_if("disk_access_.*", || options.contains("CONFIG_DISK_ACCESS"))
         // UART
         .allowlist_item_if("CONFIG_UART_.*", || options.contains("CONFIG_SERIAL"))
         .allowlist_function_if("uart_.*", || options.contains("CONFIG_SERIAL"))
