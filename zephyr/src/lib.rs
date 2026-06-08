@@ -70,8 +70,11 @@
 
 pub mod align;
 pub mod device;
+pub mod dfu;
 pub mod embassy;
 pub mod error;
+#[cfg(CONFIG_FAT_FILESYSTEM_ELM)]
+pub mod fs;
 pub mod logging;
 pub mod object;
 #[cfg(CONFIG_RUST_ALLOC)]

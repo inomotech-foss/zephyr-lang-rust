@@ -41,6 +41,19 @@ extern int errno;
 
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/drivers/uart.h>
+#include <zephyr/drivers/led_strip.h>
+#include <zephyr/drivers/sensor.h>
+#include <zephyr/drivers/can.h>
+#include <zephyr/drivers/spi.h>
+#ifdef CONFIG_FAT_FILESYSTEM_ELM
+#include <zephyr/fs/fs.h>
+#include <zephyr/storage/disk_access.h>
+#endif
+#ifdef CONFIG_MCUBOOT_IMG_MANAGER
+#include <zephyr/dfu/mcuboot.h>
+#include <zephyr/dfu/flash_img.h>
+#include <zephyr/storage/flash_map.h>
+#endif
 
 #include <zephyr/bluetooth/bluetooth.h>
 #include <zephyr/drivers/flash.h>
@@ -85,6 +98,16 @@ ZR_GPIO(GPIO_INT_LEVEL_LOW);
 ZR_GPIO(GPIO_OUTPUT_ACTIVE);
 
 #undef ZR_GPIO
+
+/* CAN mode flags are `((can_mode_t)BIT(n))` casts, which bindgen won't emit as plain consts. */
+#ifdef CONFIG_CAN
+#define ZR_CAN(name) \
+	const uint32_t ZR_ ## name = name
+
+ZR_CAN(CAN_MODE_LOOPBACK);
+
+#undef ZR_CAN
+#endif
 
 /*
  * Zephyr's irq_lock() and irq_unlock() are macros not inline functions, so we need some inlines to
