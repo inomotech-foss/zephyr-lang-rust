@@ -136,3 +136,20 @@
     - !Instance
       raw: !Myself
       device: "crate::device::can::Can"
+
+# SPI controllers -> labels::<ctrl>::get_instance() -> Spi (peripherals addressed by slave/cs)
+- name: spi-controller
+  cfg: CONFIG_SPI
+  rules:
+    - !Compatible
+      names:
+        - "zephyr,spi-emul-controller"
+        - "espressif,esp32-spi"
+        - "nxp,lpspi"
+        - "st,stm32-spi"
+        - "st,stm32h7-spi"
+      level: 0
+  actions:
+    - !Instance
+      raw: !Myself
+      device: "crate::device::spi::Spi"

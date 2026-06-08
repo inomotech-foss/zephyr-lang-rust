@@ -20,6 +20,8 @@ pub mod gpio;
 pub mod led_strip;
 #[cfg(CONFIG_SENSOR)]
 pub mod sensor;
+#[cfg(CONFIG_SPI)]
+pub mod spi;
 
 // Allow dead code, because it isn't required for a given build to have any devices.
 /// Device uniqueness.

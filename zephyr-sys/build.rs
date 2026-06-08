@@ -137,6 +137,10 @@ fn main() -> anyhow::Result<()> {
         .allowlist_item_if("CONFIG_CAN_.*", || options.contains("CONFIG_CAN"))
         .allowlist_item_if("CAN_.*", || options.contains("CONFIG_CAN"))
         .allowlist_function_if("can_.*", || options.contains("CONFIG_CAN"))
+        // SPI
+        .allowlist_item_if("CONFIG_SPI_.*", || options.contains("CONFIG_SPI"))
+        .allowlist_item_if("SPI_.*", || options.contains("CONFIG_SPI"))
+        .allowlist_function_if("spi_.*", || options.contains("CONFIG_SPI"))
         // UART
         .allowlist_item_if("CONFIG_UART_.*", || options.contains("CONFIG_SERIAL"))
         .allowlist_function_if("uart_.*", || options.contains("CONFIG_SERIAL"))
