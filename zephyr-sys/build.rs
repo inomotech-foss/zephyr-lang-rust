@@ -54,6 +54,21 @@ fn main() -> anyhow::Result<()> {
     // Bindgen everything.
     let bindings = Builder::default()
         .clang_arg("-DRUST_BINDGEN")
+        // Zephyr's minimal libc <stdint.h> maps INT64_C()/UINT64_C() etc. to the GCC-internal
+        // __INT64_C()/__UINT64_C() macros under `defined(__GNUC__) || defined(__clang__)`, but
+        // libclang (bindgen) does NOT predefine those (only __INT*_C_SUFFIX__). Any header that
+        // uses INT64_C() in an inline/constant (e.g. drivers/sensor.h) then fails to parse with
+        // "call to undeclared function '__INT64_C'". Provide them so bindgen can parse such headers.
+        .clang_arg("-D__INT8_C(c)=(c)")
+        .clang_arg("-D__INT16_C(c)=(c)")
+        .clang_arg("-D__INT32_C(c)=(c)")
+        .clang_arg("-D__INT64_C(c)=(c)")
+        .clang_arg("-D__INTMAX_C(c)=(c)")
+        .clang_arg("-D__UINT8_C(c)=(c)")
+        .clang_arg("-D__UINT16_C(c)=(c)")
+        .clang_arg("-D__UINT32_C(c)=(c)")
+        .clang_arg("-D__UINT64_C(c)=(c)")
+        .clang_arg("-D__UINTMAX_C(c)=(c)")
         .clang_arg(format!("-I{}/lib/libc/minimal/include", zephyr_base))
         .clang_arg(&target_arg)
         .header(
@@ -110,6 +125,14 @@ fn main() -> anyhow::Result<()> {
         // Flash
         .allowlist_item_if("FLASH_.*", || options.contains("CONFIG_FLASH"))
         .allowlist_function_if("flash_.*", || options.contains("CONFIG_FLASH"))
+        // LED Strip
+        .allowlist_item_if("CONFIG_LED_STRIP_.*", || options.contains("CONFIG_LED_STRIP"))
+        .allowlist_item_if("LED_.*", || options.contains("CONFIG_LED_STRIP"))
+        .allowlist_function_if("led_.*", || options.contains("CONFIG_LED_STRIP"))
+        // Sensor
+        .allowlist_item_if("CONFIG_SENSOR_.*", || options.contains("CONFIG_SENSOR"))
+        .allowlist_item_if("SENSOR_.*", || options.contains("CONFIG_SENSOR"))
+        .allowlist_function_if("sensor_.*", || options.contains("CONFIG_SENSOR"))
         // UART
         .allowlist_item_if("CONFIG_UART_.*", || options.contains("CONFIG_SERIAL"))
         .allowlist_function_if("uart_.*", || options.contains("CONFIG_SERIAL"))

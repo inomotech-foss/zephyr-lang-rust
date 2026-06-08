@@ -41,6 +41,8 @@ extern int errno;
 
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/drivers/uart.h>
+#include <zephyr/drivers/led_strip.h>
+#include <zephyr/drivers/sensor.h>
 
 #include <zephyr/bluetooth/bluetooth.h>
 #include <zephyr/drivers/flash.h>

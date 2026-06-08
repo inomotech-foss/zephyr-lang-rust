@@ -92,3 +92,30 @@
     - !Root
   actions:
     - !Labels
+
+# --- TCU bus bindings -------------------------------------------------------------------------
+# LED-strip controllers (WS2812 over SPI) -> aliases::status_led::get_instance() -> LedStrip
+- name: led-strip
+  cfg: CONFIG_LED_STRIP
+  rules:
+    - !Compatible
+      names:
+        - "worldsemi,ws2812-spi"
+      level: 0
+  actions:
+    - !Instance
+      raw: !Myself
+      device: "crate::device::led_strip::LedStrip"
+
+# LSM6DSO IMU (sensor subsystem) -> aliases::imu0::get_instance() -> Sensor
+- name: lsm6dso-sensor
+  cfg: CONFIG_SENSOR
+  rules:
+    - !Compatible
+      names:
+        - "st,lsm6dso"
+      level: 0
+  actions:
+    - !Instance
+      raw: !Myself
+      device: "crate::device::sensor::Sensor"
