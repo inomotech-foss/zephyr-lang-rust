@@ -27,8 +27,12 @@ impl Spi {
 
     /// Construct from a raw device pointer (e.g. a devicetree `get_instance_raw()`). Unlike
     /// `get_instance()`, this does NOT consume the device's `Unique`, so it can be called
-    /// repeatedly — appropriate for on-demand self-tests. The caller guarantees `device` is valid.
-    pub fn from_device(device: *const raw::device) -> Self {
+    /// repeatedly — appropriate for on-demand self-tests.
+    ///
+    /// # Safety
+    /// `device` must be a valid, `'static` Zephyr device pointer (e.g. from `get_instance_raw()`):
+    /// [`transceive`](Self::transceive) passes it to the C driver, which dereferences it.
+    pub unsafe fn from_device(device: *const raw::device) -> Self {
         Spi { device }
     }
 
