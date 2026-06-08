@@ -27,9 +27,14 @@ pub fn fat_rw(
         return Err(-(raw::ENODEV as i32));
     }
 
-    // Opaque backing for the FAT context: >= sizeof(FATFS), 8-aligned, living on this stack frame
-    // across mount..unmount (the FS core retains the pointer until fs_unmount).
-    let mut fatfs_buf = [0u64; 128];
+    // Opaque backing for the FAT context (`FATFS`): a small fixed header followed by a
+    // `win[FF_MAX_SS]` sector cache, where `FF_MAX_SS == CONFIG_FS_FATFS_MAX_SS`. Sizing it from
+    // that Kconfig (+128 B headroom for the fixed fields — a multiple of 8, so `/ 8` is exact and
+    // the buffer stays `u64`/8-aligned) means raising `CONFIG_FS_FATFS_MAX_SS` can never silently
+    // overflow this stack buffer. Lives on this stack frame across mount..unmount (the FS core
+    // retains the pointer until fs_unmount).
+    const FATFS_BUF_U64S: usize = (crate::kconfig::CONFIG_FS_FATFS_MAX_SS as usize + 128) / 8;
+    let mut fatfs_buf = [0u64; FATFS_BUF_U64S];
     // SAFETY: an all-zero fs_mount_t is valid (null list node / fs ptr); the FS-core fields are set
     // below, matching the C designated initializer.
     let mut mp: raw::fs_mount_t = unsafe { core::mem::zeroed() };
