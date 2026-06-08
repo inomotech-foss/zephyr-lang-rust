@@ -25,6 +25,13 @@ impl Spi {
         Some(Spi { device })
     }
 
+    /// Construct from a raw device pointer (e.g. a devicetree `get_instance_raw()`). Unlike
+    /// `get_instance()`, this does NOT consume the device's `Unique`, so it can be called
+    /// repeatedly — appropriate for on-demand self-tests. The caller guarantees `device` is valid.
+    pub fn from_device(device: *const raw::device) -> Self {
+        Spi { device }
+    }
+
     /// Whether the underlying device is ready.
     pub fn is_ready(&self) -> bool {
         // SAFETY: device_is_ready accepts any (incl. null) device pointer and only reads state.
