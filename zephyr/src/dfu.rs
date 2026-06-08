@@ -6,7 +6,25 @@
 //! partition ids come from the C `tcu_slot_id()` trampoline (PARTITION_ID is a compile-time DT
 //! macro with no Rust expansion).
 
+// `c_int` is only referenced by the MCUboot arms (the trampoline + `boot_request_upgrade`); gate
+// the import so a no-MCUboot build (e.g. native_sim) stays warning-clean under clippy `-D warnings`.
+#[cfg(CONFIG_MCUBOOT_IMG_MANAGER)]
 use core::ffi::c_int;
+
+// The fixed-partition ids come from the app's `tcu_slot_id()` trampoline in `src/shim.c`
+// (`PARTITION_ID` is a compile-time DT macro with no Rust expansion). Declared once here, used by
+// `running_version` (slot0) and `Slot1Writer::begin` (slot1).
+#[cfg(CONFIG_MCUBOOT_IMG_MANAGER)]
+extern "C" {
+    fn tcu_slot_id(which: c_int) -> u8;
+}
+
+/// Fixed-partition id for slot `which` (0 = slot0, 1 = slot1), via the app trampoline.
+#[cfg(CONFIG_MCUBOOT_IMG_MANAGER)]
+fn slot_id(which: c_int) -> u8 {
+    // SAFETY: a pure DT-id lookup with no preconditions; `which` is constrained to {0, 1}.
+    unsafe { tcu_slot_id(which) }
+}
 
 /// Confirm state of the running (slot0) image: 1 = confirmed / 0 = pending TEST / -1 = no MCUboot.
 pub fn confirm_state() -> i32 {
@@ -85,11 +103,7 @@ pub fn request_upgrade(permanent: bool) -> i32 {
 pub fn running_version(out: &mut [u8]) -> i32 {
     #[cfg(CONFIG_MCUBOOT_IMG_MANAGER)]
     {
-        extern "C" {
-            fn tcu_slot_id(which: c_int) -> u8;
-        }
-        // SAFETY: tcu_slot_id is the C partition-id trampoline; 0 -> slot0.
-        let slot0 = unsafe { tcu_slot_id(0) };
+        let slot0 = slot_id(0);
         // SAFETY: a zeroed mcuboot_img_header is valid; boot_read_bank_header fills it.
         let mut h: crate::raw::mcuboot_img_header = unsafe { core::mem::zeroed() };
         // SAFETY: read the slot0 image header into `h`.
@@ -164,13 +178,10 @@ pub struct Slot1Writer {
 impl Slot1Writer {
     /// Initialise streaming into slot1. Returns the writer or a negative errno.
     pub fn begin() -> Result<Slot1Writer, i32> {
-        extern "C" {
-            fn tcu_slot_id(which: c_int) -> u8;
-        }
         // SAFETY: a zeroed flash_img_context is valid prior to init.
         let mut ctx: crate::raw::flash_img_context = unsafe { core::mem::zeroed() };
-        // SAFETY: tcu_slot_id(1) -> slot1 partition id; flash_img_init_id initialises ctx.
-        let rc = unsafe { crate::raw::flash_img_init_id(&mut ctx, tcu_slot_id(1)) };
+        // SAFETY: slot_id(1) -> slot1 partition id; flash_img_init_id initialises ctx.
+        let rc = unsafe { crate::raw::flash_img_init_id(&mut ctx, slot_id(1)) };
         if rc == 0 {
             Ok(Slot1Writer { ctx })
         } else {
