@@ -49,6 +49,11 @@ extern int errno;
 #include <zephyr/fs/fs.h>
 #include <zephyr/storage/disk_access.h>
 #endif
+#ifdef CONFIG_MCUBOOT_IMG_MANAGER
+#include <zephyr/dfu/mcuboot.h>
+#include <zephyr/dfu/flash_img.h>
+#include <zephyr/storage/flash_map.h>
+#endif
 
 #include <zephyr/bluetooth/bluetooth.h>
 #include <zephyr/drivers/flash.h>

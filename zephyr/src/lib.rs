@@ -70,6 +70,7 @@
 
 pub mod align;
 pub mod device;
+pub mod dfu;
 pub mod embassy;
 pub mod error;
 #[cfg(CONFIG_FAT_FILESYSTEM_ELM)]

@@ -145,6 +145,11 @@ fn main() -> anyhow::Result<()> {
         .allowlist_item_if("FS_.*", || options.contains("CONFIG_FAT_FILESYSTEM_ELM"))
         .allowlist_function_if("fs_.*", || options.contains("CONFIG_FAT_FILESYSTEM_ELM"))
         .allowlist_function_if("disk_access_.*", || options.contains("CONFIG_DISK_ACCESS"))
+        // DFU / MCUboot
+        .allowlist_item_if("BOOT_.*", || options.contains("CONFIG_MCUBOOT_IMG_MANAGER"))
+        .allowlist_function_if("boot_.*", || options.contains("CONFIG_MCUBOOT_IMG_MANAGER"))
+        .allowlist_function_if("mcuboot_.*", || options.contains("CONFIG_MCUBOOT_IMG_MANAGER"))
+        .allowlist_function_if("flash_img_.*", || options.contains("CONFIG_MCUBOOT_IMG_MANAGER"))
         // UART
         .allowlist_item_if("CONFIG_UART_.*", || options.contains("CONFIG_SERIAL"))
         .allowlist_function_if("uart_.*", || options.contains("CONFIG_SERIAL"))
